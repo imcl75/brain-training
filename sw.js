@@ -1,7 +1,7 @@
 /* Offline copy of the app. Network first (so updates show straight away when
  * online), falling back to the cached copy when offline.
  * VERSION must match BT.version in js/core.js: tools/bump_version.sh sets both. */
-const VERSION = '26.10.26a';
+const VERSION = '26.10.26b';
 const CACHE = 'brain-gym-' + VERSION;
 importScripts('js/games-list.js');
 

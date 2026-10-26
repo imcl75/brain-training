@@ -4,6 +4,12 @@ Stores Mum's results so they can be seen on `family.html` from another device.
 A Cloudflare Worker with one KV namespace (free plan is plenty: one write per
 finished game).
 
+## Live
+
+Deployed 26.10.26 as `brain-gym-sync` on Cloudflare account "Innes.mclean@gmail.com's Account":
+`https://brain-gym-sync.innes-mclean.workers.dev` (KV namespace `BRAIN`).
+Redeploy after editing `worker.js`: `cd worker && npx wrangler deploy`.
+
 ## Data and privacy
 
 - The only key is the **family code** (made on `family.html`, 16 random

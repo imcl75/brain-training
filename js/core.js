@@ -6,7 +6,7 @@
  * screens (home, play, progress, settings), sound, and progress sync.
  */
 window.BT = window.BT || {};
-BT.version = '26.10.26a';
+BT.version = '26.10.26b';
 BT.data = BT.data || {};
 BT.games = [];
 BT.gameById = {};
