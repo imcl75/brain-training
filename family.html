@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Brain Gym Family View</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="stylesheet" href="css/app.css">
+<style>
+  .fam-code { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  .fam-code input { font: inherit; font-size: 1.1rem; min-height: 54px; padding: 0 14px; border: 2px solid var(--line); border-radius: 12px; background: var(--panel); color: var(--ink); min-width: 0; flex: 1 1 260px; letter-spacing: 0.05em; }
+  .fam-new { background: var(--panel); border: 2px solid var(--line); border-radius: var(--radius); padding: 14px 16px; margin-top: 14px; }
+  .fam-new code { font-size: 1.3rem; font-weight: 700; letter-spacing: 0.08em; user-select: all; -webkit-user-select: all; }
+</style>
+</head>
+<body>
+<div id="app">
+  <main class="page">
+    <header class="play-head"><a href="./" class="btn back">← Games</a><h1 id="title">Family view</h1></header>
+    <div class="page-body">
+      <p class="muted" id="intro">See progress shared from the Brain Gym on another device. Enter the family code that was put into that device's Settings.</p>
+      <div class="fam-code">
+        <input id="code" type="text" placeholder="Family code" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Family code">
+        <button class="btn primary" id="load">Show progress</button>
+        <button class="btn" id="make">Make a family code</button>
+      </div>
+      <div id="newcode"></div>
+      <p class="message" id="msg" aria-live="polite"></p>
+      <div id="stats"></div>
+    </div>
+    <footer class="foot"><div class="version" id="ver"></div></footer>
+  </main>
+</div>
+<script src="js/core.js"></script>
+<script src="js/config.js"></script>
+<script src="js/stats.js"></script>
+<script src="js/games-list.js"></script>
+<script>
+(function () {
+  const $ = (id) => document.getElementById(id);
+  const KEY = 'bt.family.code';
+  $('ver').textContent = 'Version ' + BT.version;
+  try { $('code').value = localStorage.getItem(KEY) || ''; } catch (e) {}
+
+  function makeCode() {
+    const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    const bytes = crypto.getRandomValues(new Uint8Array(16));
+    const chars = [...bytes].map(b => alphabet[b % alphabet.length]).join('');
+    return chars.match(/.{4}/g).join('-');
+  }
+
+  $('make').onclick = () => {
+    const code = makeCode();
+    $('code').value = code;
+    try { localStorage.setItem(KEY, code); } catch (e) {}
+    $('newcode').replaceChildren(BT.h('div', { class: 'fam-new' },
+      BT.h('p', null, 'New family code:'), BT.h('code', null, code),
+      BT.h('p', { class: 'muted' }, 'On Mum\'s iPad open the Brain Gym, go to Settings → "Share progress with family" and type this code in. Her results will appear here after her next game. Keep it private: anyone with the code can see the results.')));
+  };
+
+  async function load() {
+    const code = $('code').value.trim();
+    if (!code) { $('msg').textContent = 'Enter the family code first.'; return; }
+    if (!BT.config.syncUrl) { $('msg').textContent = 'Progress sharing is not switched on for this site yet (no sync address in js/config.js).'; return; }
+    try { localStorage.setItem(KEY, code); } catch (e) {}
+    $('msg').textContent = 'Loading…';
+    try {
+      const data = await BT.sync.fetchAll(code);
+      $('msg').textContent = '';
+      $('title').textContent = (data.name ? data.name + "'s" : 'Family') + ' progress';
+      $('intro').textContent = 'Last updated ' + new Date(data.updated).toLocaleString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', hour: 'numeric', minute: '2-digit' }) + (data.version ? ' · app version ' + data.version : '');
+      BT.stats.render($('stats'), data.results || [], { name: data.name, showLast: true });
+    } catch (e) {
+      $('msg').textContent = e.message;
+    }
+  }
+  $('load').onclick = load;
+  $('code').addEventListener('keydown', (e) => { if (e.key === 'Enter') load(); });
+  BT.loadGames().then(() => { if ($('code').value) load(); });
+})();
+</script>
+</body>
+</html>

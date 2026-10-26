@@ -1,0 +1,4 @@
+.claude/
+.DS_Store
+worker/.wrangler/
+node_modules/

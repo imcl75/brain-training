@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Daily Brain Gym</title>
+<meta name="description" content="Daily word, number, tile and memory puzzles in one place.">
+<meta name="theme-color" content="#f7f3ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Brain Gym">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<div id="app"><p class="lead">Loading…</p></div>
+<noscript><p class="lead">Please switch on JavaScript to play.</p></noscript>
+
+<script src="js/core.js"></script>
+<script src="js/config.js"></script>
+<script src="js/stats.js"></script>
+<script src="js/games-list.js"></script>
+<script>BT.loadGames().then(BT.start);</script>
+</body>
+</html>
